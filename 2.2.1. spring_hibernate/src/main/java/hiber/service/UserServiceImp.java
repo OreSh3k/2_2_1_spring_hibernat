@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -26,4 +27,17 @@ public class UserServiceImp implements UserService {
       return userDao.listUsers();
    }
 
+
+   @Transactional
+   @Override
+   public String getUserByCar(String model, int series) {
+      return Optional.ofNullable(userDao.getUserByCar(model, series))
+              .filter(users -> !users.isEmpty())
+              .map(users -> {StringBuilder sb = new StringBuilder();
+                              for(User user : users) {
+                                 sb.append(user.toString()).append("\n");
+                              }
+                              return sb.toString();
+              }).orElse("Пользователь с машиной " + model + " и номером " + series + " не найден.");
+   }
 }
